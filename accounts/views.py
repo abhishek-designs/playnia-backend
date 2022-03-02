@@ -46,7 +46,6 @@ def fetch_user(request):
     """
         View to fetch registered user's data through auth token
     """
-    print(request.user)
     # Serialize the user instance
     serializer = UserSerializer(request.user, many=False)
     user_res = serializer.data
@@ -57,6 +56,9 @@ def fetch_user(request):
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def update_user(request):
+    """
+        View to fetch registered user's data through auth token
+    """
     # Updating the user profile
     print(request.data['first_name'])
     serializer = UserSerializer(request.user, data=request.data)
