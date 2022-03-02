@@ -4,7 +4,8 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.authtoken.models import Token
-from .serializers import UserSerializer, LoginSerializer 
+from .serializers import UserSerializer, LoginSerializer
+from .models import User 
 
 # Create your views here.
 @api_view(['POST'])
@@ -51,6 +52,23 @@ def fetch_user(request):
     user_res = serializer.data
     user_res.pop('password')
     return Response(user_res, status=status.HTTP_200_OK)
+
+@api_view(['GET'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def fetch_user(request, pk):
+    """
+        View to fetch user with user id
+    """
+    # Serialize the user instance
+    user = User.objects.get(id=pk)
+    try:
+        serializer = UserSerializer(user, many=False)
+        user_res = serializer.data
+        user_res.pop('password')
+        return Response(user_res, status=status.HTTP_200_OK)
+    except User.DoesNotExist:
+        return Response({'msg': f'User with user id: {pk} not found'}, status=status.HTTP_404_NOT_FOUND)
 
 @api_view(['PUT'])
 @authentication_classes([TokenAuthentication])
