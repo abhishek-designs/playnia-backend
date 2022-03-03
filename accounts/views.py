@@ -43,7 +43,7 @@ def sign_in_user(request):
 @api_view(['GET'])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
-def fetch_user(request):
+def fetch_user_profile(request):
     """
         View to fetch registered user's data through auth token
     """
@@ -61,8 +61,8 @@ def fetch_user(request, pk):
         View to fetch user with user id
     """
     # Serialize the user instance
-    user = User.objects.get(id=pk)
     try:
+        user = User.objects.get(id=pk)
         serializer = UserSerializer(user, many=False)
         user_res = serializer.data
         user_res.pop('password')
@@ -78,7 +78,6 @@ def update_user(request):
         View to fetch registered user's data through auth token
     """
     # Updating the user profile
-    print(request.data['first_name'])
     serializer = UserSerializer(request.user, data=request.data)
     if serializer.is_valid():
         serializer.save()
